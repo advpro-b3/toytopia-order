@@ -1,10 +1,16 @@
 package id.ac.ui.cs.advprog.toytopiaorder.model;
 
+import id.ac.ui.cs.advprog.toytopiaorder.model.state.InDeliveryState;
+import id.ac.ui.cs.advprog.toytopiaorder.model.state.WaitingVerificationState;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class OrderTest {
+import id.ac.ui.cs.advprog.toytopiaorder.enums.DeliveryMethod;
+
+@Nested
+class OrderTest {
 
     private Order order;
     private Cart cart;
@@ -22,13 +28,13 @@ public class OrderTest {
 
     @Test
     public void testOrderStatusIsWaitingVerificationOnInitiation() {
-        assertEquals(OrderStatus.WAITING_VERIFICATION, order.getStatus());
+        assertTrue(order.getState() instanceof WaitingVerificationState);
     }
 
     @Test
     public void testSetDeliveryMethod() {
-        order.setDeliveryMethod(DeliveryMethod.JTE);
-        assertEquals(DeliveryMethod.JTE, order.getDeliveryMethod());
+        order.setDeliveryMethod(DeliveryMethod.JTE.getValue());
+        assertEquals(DeliveryMethod.JTE.getValue(), order.getDeliveryMethod());
         assertTrue(order.getResiCode().startsWith("JTE-"));
     }
 
@@ -39,9 +45,11 @@ public class OrderTest {
 
     @Test
     public void testSetStatus() {
-        order.setStatus(OrderStatus.IN_DELIVERY);
-        assertEquals(OrderStatus.IN_DELIVERY, order.getStatus());
-    }
+        order.setStatus("IN_DELIVERY");
+        assertEquals("IN_DELIVERY", order.getStatus());
+        // Ensure state changes accordingly
+        assertTrue(order.getState() instanceof InDeliveryState);
+}
 
     @Test
     public void testSetStatusInvalid() {
