@@ -60,7 +60,6 @@ public class Order {
     }
 
     public String setResiCode(String method) {
-        System.out.println(method);
         final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random random = new Random();
         StringBuilder str = new StringBuilder(16);
