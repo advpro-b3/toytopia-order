@@ -1,15 +1,14 @@
 package id.ac.ui.cs.advprog.toytopiaorder.model;
 
-import id.ac.ui.cs.advprog.toytopiaorder.model.state.InDeliveryState;
-import id.ac.ui.cs.advprog.toytopiaorder.model.state.WaitingVerificationState;
+import id.ac.ui.cs.advprog.toytopiaorder.enums.DeliveryMethod;
+import id.ac.ui.cs.advprog.toytopiaorder.model.Cart;
+import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
+import id.ac.ui.cs.advprog.toytopiaorder.model.state.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import id.ac.ui.cs.advprog.toytopiaorder.enums.DeliveryMethod;
-
-@Nested
 class OrderTest {
 
     private Order order;
@@ -21,38 +20,62 @@ class OrderTest {
         order = new Order(cart);
     }
 
-    @Test
-    public void testOrderIdIsNotNull() {
-        assertNotNull(order.getId());
+    @Nested
+    class InitialOrderTests {
+        @Test
+        public void testOrderStatusIsWaitingVerificationOnInitiation() {
+            assertTrue(order.getState() instanceof WaitingVerificationState);
+        }
     }
 
-    @Test
-    public void testOrderStatusIsWaitingVerificationOnInitiation() {
-        assertTrue(order.getState() instanceof WaitingVerificationState);
+    @Nested
+    class VerifyTests {
+        @Test
+        public void testVerify() {
+            order.verify();
+            assertTrue(order.getState() instanceof SetDeliveryState);
+        }
     }
 
-    @Test
-    public void testSetDeliveryMethod() {
-        order.setDeliveryMethod(DeliveryMethod.JTE.getValue());
-        assertEquals(DeliveryMethod.JTE.getValue(), order.getDeliveryMethod());
-        assertTrue(order.getResiCode().startsWith("JTE-"));
+    @Nested
+    class SetDeliveryMethodTests {
+        @Test
+        public void testSetDeliveryMethodInvalid() {
+            order.setState(new SetDeliveryState(order));
+            assertThrows(IllegalArgumentException.class, () -> order.setDeliveryMethod("InvalidMethod"));
+        }
+
+        @Test
+        public void testSetDeliveryMethodIllegalState() {
+            assertThrows(IllegalStateException.class, () -> order.setDeliveryMethod("JTE"));
+        }
+        @Test
+        public void testSetDeliveryMethod() {
+            order.setState(new SetDeliveryState(order));
+            order.setDeliveryMethod(DeliveryMethod.JTE.getValue());
+            assertEquals(DeliveryMethod.JTE.getValue(), order.getDeliveryMethod());
+            assertTrue(order.getResiCode().startsWith("JTE-"));
+            assertTrue(order.getState() instanceof InDeliveryState);
+        }
     }
 
-    @Test
-    public void testSetDeliveryMethodInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> order.setDeliveryMethod("InvalidMethod"));
+    @Nested
+    class CompleteTests {
+        @Test
+        public void testCompleteIllegalStateException() {
+            order.setState(new InDeliveryState(order));
+            order.complete();
+            assertTrue(order.getState() instanceof CompletedState);
+        }
     }
 
-    @Test
-    public void testSetStatus() {
-        order.setStatus("IN_DELIVERY");
-        assertEquals("IN_DELIVERY", order.getStatus());
-        // Ensure state changes accordingly
-        assertTrue(order.getState() instanceof InDeliveryState);
-}
-
-    @Test
-    public void testSetStatusInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> order.setStatus("InvalidStatus"));
+    @Nested
+    class CancelTests {
+        @Test
+        public void testCancel() {
+            order.setState(new WaitingVerificationState(order));
+            order.cancel();
+            assertTrue(order.getState() instanceof CanceledState);
+        }
     }
 }

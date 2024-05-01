@@ -6,19 +6,23 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Cart {
-    private Long id;
+    private String id;
     private String productId;
     private String name;
     private int quantity;
     private double price;
 
     public Cart(){}
-    public Cart(Long id, String productId, String name, int quantity, double price){
+    public Cart(String id, String productId, String name, int quantity, double price){
         this.id = id;
         this.productId = productId;
         this.name = name;
         setPrice(price);
         setQuantity(quantity);
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setPrice(double price) {

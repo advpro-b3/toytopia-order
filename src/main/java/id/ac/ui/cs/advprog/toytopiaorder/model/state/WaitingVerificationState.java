@@ -1,19 +1,31 @@
 package id.ac.ui.cs.advprog.toytopiaorder.model.state;
 
 import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
-import id.ac.ui.cs.advprog.toytopiaorder.model.state.OrderState;
 
 public class WaitingVerificationState implements OrderState {
+    private final Order order;
+
+    public WaitingVerificationState(Order order) {
+        this.order = order;
+    }
 
     @Override
-    public void changeState(Order order) {
-        order.setStatus("WAITING_VERIFICATION");
+    public void verify() {
+        order.setState(new SetDeliveryState(order));
     }
 
-    public void verifOrder(Order order) {
-        order.setStatus("SET_DELIVERY");
+    @Override
+    public void cancel() {
+        order.setState(new CanceledState(order));
     }
-    public void cancelOrder(Order order) {
-        order.setStatus("CANCELED");
+
+    @Override
+    public void setDelivery(String method) {
+        throw new IllegalStateException("Cannot set delivery method while waiting for verification");
+    }
+
+    @Override
+    public void complete() {
+        throw new IllegalStateException("Cannot complete an order while waiting for verification");
     }
 }

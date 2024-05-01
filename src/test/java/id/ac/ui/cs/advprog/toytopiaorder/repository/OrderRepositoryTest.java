@@ -22,7 +22,9 @@ public class OrderRepositoryTest {
     public void setUp() {
         orderRepository = new OrderRepository();
         cart1 = new Cart();
+        cart1.setId("1");
         cart2 = new Cart();
+        cart2.setId("2");
         order1 = new Order(cart1);
         order2 = new Order(cart2);
     }
@@ -36,7 +38,6 @@ public class OrderRepositoryTest {
         Order savedOrder = orderIterator.next();
         assertEquals(order1.getId(), savedOrder.getId());
         assertEquals(order1.getState(), savedOrder.getState());
-        assertEquals(order1.getStatus(), savedOrder.getStatus());
     }
 
     @Test

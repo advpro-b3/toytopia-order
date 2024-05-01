@@ -19,16 +19,18 @@ public class Order {
     String deliveryMethod;
     String resiCode;
     OrderState state;
-    String status;
 
     public Order(Cart cart) {
-        this.id = UUID.randomUUID().toString();
+        this.id = cart.getId();
         this.cart = cart;
-        this.state = new WaitingVerificationState();
-        this.state.changeState(this);
+        this.state = new WaitingVerificationState(this);
     }
 
     public void setDeliveryMethod(String method) {
+        state.setDelivery(method);
+    }
+
+    public void setDelivery(String method) {
         if (DeliveryMethod.contains(method)) {
             this.deliveryMethod = method;
             this.resiCode = setResiCode(method);
@@ -36,27 +38,8 @@ public class Order {
             throw new IllegalArgumentException();
         }
     }
-    public void setStatus(String status) {
-        if (status.equals("WAITING_VERIFICATION")) {
-            this.status = status;
-        }
-        else if (status.equals("SET_DELIVERY")) {
-            state = new SetDeliveryState();
-            this.status = status;
-        }
-        else if (status.equals("IN_DELIVERY")) {
-            state = new InDeliveryState();
-            this.status = status;
-        }
-        else if (status.equals("COMPLETED")) {
-            this.status = status;
-        }
-        else if (status.equals("CANCELED")) {
-            this.status = status;
-        }
-        else {
-            throw new IllegalArgumentException();
-        }
+    public void setState(OrderState state) {
+        this.state = state;
     }
 
     public String setResiCode(String method) {
@@ -81,5 +64,17 @@ public class Order {
             str.append(randomChar);
         }
         return str.toString();
+    }
+
+    public void verify() {
+        state.verify();
+    }
+
+    public void cancel() {
+        state.cancel();
+    }
+
+    public void complete() {
+        state.complete();
     }
 }
