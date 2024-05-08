@@ -25,8 +25,8 @@ public class OrderRepositoryTest {
         cart1.setId("1");
         cart2 = new Cart();
         cart2.setId("2");
-        order1 = new Order(cart1);
-        order2 = new Order(cart2);
+        order1 = new Order(cart1, "1");
+        order2 = new Order(cart2, "2");
     }
 
     @Test

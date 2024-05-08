@@ -17,7 +17,7 @@ class OrderTest {
     @BeforeEach
     public void setUp() {
         cart = new Cart();
-        order = new Order(cart);
+        order = new Order(cart, "1");
     }
 
     @Nested

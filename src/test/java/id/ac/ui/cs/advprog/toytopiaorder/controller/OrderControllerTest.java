@@ -42,9 +42,9 @@ class OrderControllerTest {
     void testCheckoutValidCart() {
         String cartId = "123";
         Cart cart = new Cart();
-        Order order = new Order(cart);
+        Order order = new Order(cart, cartId);
         when(cartService.getCartById(cartId)).thenReturn(cart);
-        when(orderService.createOrderFromCart(cart)).thenReturn(order);
+        when(orderService.createOrderFromCart(cart, cartId)).thenReturn(order);
 
         ResponseEntity<String> response = orderController.checkout(cartId);
 
@@ -95,14 +95,14 @@ class OrderControllerTest {
     @Test
     void testOrderListPage() {
         List<Order> orders = new ArrayList<>();
-        Order order1 = new Order(new Cart());
-        Order order2 = new Order(new Cart());
+        Order order1 = new Order(new Cart(), "1");
+        Order order2 = new Order(new Cart(), "2");
         orders.add(order1);
         orders.add(order2);
         when(orderService.findAll()).thenReturn(orders);
 
         String viewName = orderController.OrderListPage(model);
-        assertEquals("OrderList", viewName);
+        assertEquals("BuyerOrderList", viewName);
     }
 }
 

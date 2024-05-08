@@ -35,7 +35,7 @@ class OrderServiceImplTest {
 
     @Test
     void testVerifyOrder() {
-        Order order = new Order(new Cart());
+        Order order = new Order(new Cart(), "1");
         when(orderRepository.findById("1")).thenReturn(order);
         orderService.verifyOrder("1");
         verify(orderRepository, times(1)).save(order);
@@ -43,7 +43,7 @@ class OrderServiceImplTest {
 
     @Test
     void testCancelOrder() {
-        Order order = new Order(new Cart());
+        Order order = new Order(new Cart(), "1");
         when(orderRepository.findById("1")).thenReturn(order);
         orderService.cancelOrder("1");
         verify(orderRepository, times(1)).save(order);
@@ -51,7 +51,7 @@ class OrderServiceImplTest {
 
     @Test
     void testSetDeliveryMethod() {
-        Order order = new Order(new Cart());
+        Order order = new Order(new Cart(), "1");
         order.setState(new SetDeliveryState(order));
         when(orderRepository.findById("1")).thenReturn(order);
         orderService.setDeliveryMethod("1", "JTE");
@@ -61,7 +61,7 @@ class OrderServiceImplTest {
 
     @Test
     void testCompleteOrder() {
-        Order order = new Order(new Cart());
+        Order order = new Order(new Cart(), "1");
         when(orderRepository.findById("1")).thenReturn(order);
         order.setState(new InDeliveryState(order));
         orderService.completeOrder("1");
@@ -70,7 +70,7 @@ class OrderServiceImplTest {
 
     @Test
     void testFindOrderById() {
-        Order order = new Order(new Cart());
+        Order order = new Order(new Cart(), "1");
         when(orderRepository.findById("1")).thenReturn(order);
         assertEquals(order, orderService.findOrderById("1"));
     }
@@ -78,8 +78,8 @@ class OrderServiceImplTest {
     @Test
     void testFindAll() {
         List<Order> orders = new ArrayList<>();
-        Order order1 = new Order(new Cart());
-        Order order2 = new Order(new Cart());
+        Order order1 = new Order(new Cart(), "1");
+        Order order2 = new Order(new Cart(), "2");
         orders.add(order1);
         orders.add(order2);
         when(orderRepository.findAll()).thenReturn(orders.iterator());
@@ -90,7 +90,7 @@ class OrderServiceImplTest {
     void testCreateOrderFromCart() {
         Cart cart = new Cart();
         cart.setId("1");
-        Order created = orderService.createOrderFromCart(cart);
+        Order created = orderService.createOrderFromCart(cart, "1");
         when(cartService.getCartById("1")).thenReturn(cart);
         assertEquals("1", created.getId());
     }
