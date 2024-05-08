@@ -5,9 +5,11 @@ import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
 
 public class CompletedState implements OrderState {
     private final Order order;
+    public final String status;
 
     public CompletedState(Order order) {
         this.order = order;
+        this.status = "Completed";
     }
     @Override
     public void verify() {

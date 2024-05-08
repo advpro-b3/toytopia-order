@@ -5,9 +5,11 @@ import id.ac.ui.cs.advprog.toytopiaorder.model.state.OrderState;
 
 public class InDeliveryState implements OrderState {
     private final Order order;
+    public final String status;
 
     public InDeliveryState(Order order) {
         this.order = order;
+        this.status = "In Delivery";
     }
 
     @Override

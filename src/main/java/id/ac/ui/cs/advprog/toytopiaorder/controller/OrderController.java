@@ -11,9 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Iterator;
 import java.util.List;
 
+@RestController
 @Controller
 @RequestMapping("/order")
 public class OrderController {
@@ -30,7 +30,7 @@ public class OrderController {
     public ResponseEntity<String> checkout(@PathVariable("cartId") String cartId) {
         Cart cart = cartService.getCartById(cartId);
         if (cart != null) {
-            Order order = orderService.createOrderFromCart(cart);
+            Order order = orderService.createOrderFromCart(cart, cartId);
             if (order != null) {
                 return ResponseEntity.ok("Order created successfully with ID: " + order.getId());
             } else {
@@ -65,6 +65,19 @@ public class OrderController {
     public String OrderListPage(Model model) {
         List<Order> allOrders = orderService.findAll();
         model.addAttribute("orders", allOrders);
-        return "OrderList";
+        return "BuyerOrderList";
+    }
+
+    @GetMapping("/list-json")
+    public List<Order> OrderListJson(Model model) {
+        List<Order> allOrders = orderService.findAll();
+        return allOrders;
+    }
+
+    @GetMapping("/adminList")
+    public String OrderListPageAdmin(Model model) {
+        List<Order> allOrders = orderService.findAll();
+        model.addAttribute("orders", allOrders);
+        return "AdminOrderList";
     }
 }

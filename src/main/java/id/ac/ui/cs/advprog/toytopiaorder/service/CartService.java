@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CartService {
-    private final String CART_API_BASE_URL = "http://cart-service/api/cart/";
+    private final String CART_API_BASE_URL = "https://toytopia-cart-production.up.railway.app/api/cart/data/";
 
     private final RestTemplate restTemplate;
 

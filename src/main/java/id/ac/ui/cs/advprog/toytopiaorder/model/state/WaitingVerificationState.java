@@ -4,9 +4,11 @@ import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
 
 public class WaitingVerificationState implements OrderState {
     private final Order order;
+    public final String status;
 
     public WaitingVerificationState(Order order) {
         this.order = order;
+        this.status = "Waiting Verification";
     }
 
     @Override

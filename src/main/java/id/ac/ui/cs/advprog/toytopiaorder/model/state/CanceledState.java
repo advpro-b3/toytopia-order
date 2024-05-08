@@ -4,9 +4,11 @@ import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
 
 public class CanceledState implements OrderState {
     private final Order order;
+    public final String status;
 
     public CanceledState(Order order) {
         this.order = order;
+        this.status = "Canceled";
     }
 
     @Override

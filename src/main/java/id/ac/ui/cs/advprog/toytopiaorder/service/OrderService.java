@@ -12,5 +12,5 @@ public interface OrderService {
     void completeOrder(String id);
     Order findOrderById(String id);
     List<Order> findAll();
-    Order createOrderFromCart(Cart cart);
+    Order createOrderFromCart(Cart cart, String cartId);
 }

@@ -20,8 +20,8 @@ public class Order {
     String resiCode;
     OrderState state;
 
-    public Order(Cart cart) {
-        this.id = cart.getId();
+    public Order(Cart cart, String cartId) {
+        this.id = cartId;
         this.cart = cart;
         this.state = new WaitingVerificationState(this);
     }

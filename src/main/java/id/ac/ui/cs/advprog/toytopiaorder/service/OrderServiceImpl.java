@@ -61,9 +61,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order createOrderFromCart(Cart cart) {
+    public Order createOrderFromCart(Cart cart, String cartId) {
         if (cart != null) {
-            Order order = new Order(cart);
+            Order order = new Order(cart, cartId);
             orderRepository.save(order);
             return order;
         }
