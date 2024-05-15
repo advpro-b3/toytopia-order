@@ -3,14 +3,26 @@ package id.ac.ui.cs.advprog.toytopiaorder.model.state;
 import id.ac.ui.cs.advprog.toytopiaorder.enums.DeliveryMethod;
 import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
 import id.ac.ui.cs.advprog.toytopiaorder.model.state.OrderState;
+import jakarta.persistence.*;
+import lombok.Getter;
 
+@Entity
+@Getter
+@DiscriminatorValue("SetDelivery")
 public class SetDeliveryState implements OrderState {
-    private final Order order;
-    public final String status;
+    @ManyToOne
+    public Order order;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int id = 2;
+    public final String status = "Set Delivery";
 
     public SetDeliveryState(Order order) {
         this.order = order;
-        this.status = "Set Delivery";
+    }
+
+    public SetDeliveryState() {
+
     }
 
     @Override

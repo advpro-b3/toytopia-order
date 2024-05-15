@@ -2,28 +2,30 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Product List</title>
+    <title>Order List</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
 <body>
 
 <div class="container my-2">
-    <h2>Product List</h2>
+    <h2>My Order List</h2>
     <table border="1" class="table table-striped table-responsive-md">
         <thead>
         <tr>
             <th scope="col">Order Id</th>
+            <th scope="col">Total Harga</th>
             <th scope="col">Status</th>
-            <th scope="col">Selesai</th>
+            <th scope="col">Pesanan Diterima</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="order: ${orders}">
-            <td th:text="${order.getId()}"></td>
-            <td th:text="${order.getState().status}"></td>
+            <td th:text="${order.getOrderId()}"></td>
+            <td th:text="${order.getTotalPrice()}"></td>
+            <td th:text="${order.status()}"></td>
             <td>
                 <form th:action="@{/order/complete/{orderId}(orderId=${order.id})}" th:method="put">
-                    <button type="submit" class="btn btn-primary btn-sm mb-3">Selesai</button>
+                    <button type="submit" class="btn btn-primary btn-sm mb-3">Pesanan Diterima</button>
                 </form>
             </td>
         </tr>

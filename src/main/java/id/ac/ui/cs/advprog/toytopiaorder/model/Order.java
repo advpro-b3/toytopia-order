@@ -1,29 +1,42 @@
 package id.ac.ui.cs.advprog.toytopiaorder.model;
 
-import id.ac.ui.cs.advprog.toytopiaorder.model.Cart;
-import id.ac.ui.cs.advprog.toytopiaorder.model.state.InDeliveryState;
-import id.ac.ui.cs.advprog.toytopiaorder.model.state.OrderState;
+import id.ac.ui.cs.advprog.toytopiaorder.model.state.*;
 import id.ac.ui.cs.advprog.toytopiaorder.enums.DeliveryMethod;
+import jakarta.persistence.*;
 
-import java.util.UUID;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
-import id.ac.ui.cs.advprog.toytopiaorder.model.state.SetDeliveryState;
-import id.ac.ui.cs.advprog.toytopiaorder.model.state.WaitingVerificationState;
 import lombok.Getter;
 
+@Entity
 @Getter
 public class Order {
-    String id;
-    Cart cart;
+    @Id
+    private String orderId;
+    private Long totalPrice;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @MapKey(name = "productId")
+            private List<CartItem> cartItemMap;
     String deliveryMethod;
     String resiCode;
-    OrderState state;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_state_id")
+    private OrderState state;
 
-    public Order(Cart cart, String cartId) {
-        this.id = cartId;
-        this.cart = cart;
+    public Order(Long totalPrice, String cartId) {
+        this.orderId = cartId;
+        this.totalPrice = totalPrice;
         this.state = new WaitingVerificationState(this);
+    }
+
+    public Order() {
+
+    }
+
+    public void addCartItem(List<CartItem> cart) {
+        this.cartItemMap = cart;
     }
 
     public void setDeliveryMethod(String method) {
@@ -38,6 +51,25 @@ public class Order {
             throw new IllegalArgumentException();
         }
     }
+
+    public String status() {
+        if (state instanceof WaitingVerificationState) {
+            return "Waiting for Verification";
+        }
+        if (state instanceof SetDeliveryState) {
+            return "Set Delivery";
+        }
+        if (state instanceof InDeliveryState) {
+            return "In Delivery";
+        }
+        if (state instanceof CompletedState) {
+            return "Completed";
+        }
+        else {
+            return "Canceled";
+        }
+    }
+
     public void setState(OrderState state) {
         this.state = state;
     }

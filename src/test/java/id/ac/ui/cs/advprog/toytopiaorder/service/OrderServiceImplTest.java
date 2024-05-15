@@ -1,6 +1,5 @@
 package id.ac.ui.cs.advprog.toytopiaorder.service;
 
-import id.ac.ui.cs.advprog.toytopiaorder.model.Cart;
 import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
 import id.ac.ui.cs.advprog.toytopiaorder.model.state.InDeliveryState;
 import id.ac.ui.cs.advprog.toytopiaorder.model.state.SetDeliveryState;
@@ -12,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import static org.mockito.Mockito.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

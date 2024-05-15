@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Order</title>
+</head>
+<body>
+<h1>Detail Order</h1>
+<table border="1" class="table table-striped table-responsive-md">
+    <thead>
+    <tr>
+        <th scope="col">Order Id</th>
+        <th scope="col">Status</th>
+        <th scope="col">Verifikasi</th>
+        <th scope="col">Cancel</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${orderId}"></td>
+        <td th:text="${status}"></td>
+        <td>
+            <form th:action="@{/order/verify/{orderId}}" th:method="put">
+                <button type="submit" class="btn btn-primary btn-sm mb-3">Verify</button>
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/order/cancel/{orderId}}" th:method="put">
+                <button type="submit" class="btn btn-danger">Cancel</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Form for additional details -->
+<form id="additionalDetailsForm">
+    <label for="deliveryMethod">Delivery Method:</label>
+    <select id="deliveryMethod">
+        <option value="JTE">JTE</option>
+        <option value="GOBEK">GOBEK</option>
+        <option value="SIWUZZ">SiWuzz</option>
+    </select>
+    <button type="submit">Submit</button>
+</form>
+
+<label>Kode Resi:</label>
+<span id="kodeResi"></span>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Nama</th>
+        <th>Jumlah</th>
+        <th>Harga</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item: ${items}">
+        <td th:text="${item.get("name")}"></td>
+        <td th:text="${item.get("quantity")}"></td>
+        <td th:text="${item.get("price")}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<p>Total Harga: <span id="totalHarga">120000</span></p>
+
+<

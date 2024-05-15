@@ -1,8 +1,6 @@
 package id.ac.ui.cs.advprog.toytopiaorder.model;
 
 import id.ac.ui.cs.advprog.toytopiaorder.enums.DeliveryMethod;
-import id.ac.ui.cs.advprog.toytopiaorder.model.Cart;
-import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
 import id.ac.ui.cs.advprog.toytopiaorder.model.state.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

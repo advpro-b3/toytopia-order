@@ -2,14 +2,26 @@ package id.ac.ui.cs.advprog.toytopiaorder.model.state;
 
 import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
 import id.ac.ui.cs.advprog.toytopiaorder.model.state.OrderState;
+import jakarta.persistence.*;
+import lombok.Getter;
 
+@Entity
+@Getter
+@DiscriminatorValue("InDelivery")
 public class InDeliveryState implements OrderState {
-    private final Order order;
-    public final String status;
+    @ManyToOne
+    public Order order;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int id = 3;
+    public final String status = "In Delivery";
 
     public InDeliveryState(Order order) {
         this.order = order;
-        this.status = "In Delivery";
+    }
+
+    public InDeliveryState() {
+
     }
 
     @Override

@@ -1,14 +1,25 @@
 package id.ac.ui.cs.advprog.toytopiaorder.model.state;
 
 import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
+import jakarta.persistence.*;
+import lombok.Getter;
 
+@Entity
+@Getter
+@DiscriminatorValue("Canceled")
 public class CanceledState implements OrderState {
-    private final Order order;
-    public final String status;
-
+    @ManyToOne
+    public Order order;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int id = 5;
+    public final String status = "Canceled";
     public CanceledState(Order order) {
         this.order = order;
-        this.status = "Canceled";
+    }
+
+    public CanceledState() {
+
     }
 
     @Override

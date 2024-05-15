@@ -1,6 +1,5 @@
 package id.ac.ui.cs.advprog.toytopiaorder.controller;
 
-import id.ac.ui.cs.advprog.toytopiaorder.model.Cart;
 import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
 import id.ac.ui.cs.advprog.toytopiaorder.service.CartService;
 import id.ac.ui.cs.advprog.toytopiaorder.service.OrderService;
@@ -12,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Controller
@@ -28,11 +28,11 @@ public class OrderController {
 
     @PostMapping("/checkout/{cartId}")
     public ResponseEntity<String> checkout(@PathVariable("cartId") String cartId) {
-        Cart cart = cartService.getCartById(cartId);
+        Map<String, Object> cart = cartService.getCartById(cartId);
         if (cart != null) {
-            Order order = orderService.createOrderFromCart(cart, cartId);
+            Order order = orderService.createOrderFromCart((Long) cart.get("totalPrice"), cartId, (Map<String, Object>) cart.get("cartItems"));
             if (order != null) {
-                return ResponseEntity.ok("Order created successfully with ID: " + order.getId());
+                return ResponseEntity.ok("Order created successfully with ID: " + order.getOrderId());
             } else {
                 return ResponseEntity.badRequest().body("Failed to create order from cart.");
             }
@@ -51,8 +51,8 @@ public class OrderController {
         orderService.cancelOrder(orderId);
     }
 
-    @PutMapping("/setDeliveryMethod/{id}")
-    public void setDeliveryMethod(@PathVariable("id") String orderId, String deliveryMethod) {
+    @PutMapping("/setDeliveryMethod/{id}/{deliveryMethod}")
+    public void setDeliveryMethod(@PathVariable("id") String orderId, @PathVariable("deliveryMethod") String deliveryMethod) {
         orderService.setDeliveryMethod(orderId, deliveryMethod);
     }
 
