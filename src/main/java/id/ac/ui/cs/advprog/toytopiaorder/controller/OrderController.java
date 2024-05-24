@@ -30,7 +30,7 @@ public class OrderController {
     public ResponseEntity<String> checkout(@PathVariable("cartId") String cartId) {
         Map<String, Object> cart = cartService.getCartById(cartId);
         if (cart != null) {
-            Order order = orderService.createOrderFromCart((Long) cart.get("totalPrice"), cartId, (Map<String, Object>) cart.get("cartItems"));
+            Order order = orderService.createOrderFromCart((Double) cart.get("totalPrice"), cartId, (Map<String, Map<String, Object>>) cart.get("cartItems"));
             if (order != null) {
                 return ResponseEntity.ok("Order created successfully with ID: " + order.getOrderId());
             } else {
@@ -66,6 +66,13 @@ public class OrderController {
         List<Order> allOrders = orderService.findAll();
         model.addAttribute("orders", allOrders);
         return "BuyerOrderList";
+    }
+
+    @GetMapping("/list/details/{id}")
+    public String OrderDetailPage(@PathVariable("id") String orderId, Model model) {
+        Order order = orderService.findByOrderId(orderId);
+        model.addAttribute("order", order);
+        return "BuyerDetailOrder";
     }
 
     @GetMapping("/list-json")

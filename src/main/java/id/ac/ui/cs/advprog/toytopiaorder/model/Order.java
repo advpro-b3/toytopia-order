@@ -7,28 +7,28 @@ import jakarta.persistence.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 import lombok.Getter;
 
 @Entity
 @Getter
+@Table(name = "orders")
 public class Order {
     @Id
     private String orderId;
-    private Long totalPrice;
+    private Double totalPrice;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKey(name = "productId")
             private List<CartItem> cartItemMap;
     String deliveryMethod;
     String resiCode;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_state_id")
-    private OrderState state;
+    @ManyToOne
+    private AbstractOrderState state;
 
-    public Order(Long totalPrice, String cartId) {
-        this.orderId = cartId;
+    public Order(Double totalPrice) {
+        this.orderId = UUID.randomUUID().toString();;
         this.totalPrice = totalPrice;
-        this.state = new WaitingVerificationState(this);
     }
 
     public Order() {
@@ -70,7 +70,7 @@ public class Order {
         }
     }
 
-    public void setState(OrderState state) {
+    public void setState(AbstractOrderState state) {
         this.state = state;
     }
 

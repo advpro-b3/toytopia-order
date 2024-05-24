@@ -5,5 +5,5 @@ import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderRepository extends JpaRepository<Order, String> {
-    Order findOrderItemById(String orderId);
+    Order findByOrderId(String orderId);
 }

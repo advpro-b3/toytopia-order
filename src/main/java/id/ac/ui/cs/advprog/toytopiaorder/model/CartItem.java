@@ -6,14 +6,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
+import java.util.UUID;
+
 @Entity
 public class CartItem {
     @Id
     private String cartId;
-    private Long productId;
+    private String productId;
     private String productName;
     private int quantity;
-    private Long price;
+    private Double price;
 
     @ManyToOne
     private Order order;
@@ -23,8 +25,8 @@ public class CartItem {
     public CartItem() {
     }
 
-    public CartItem(String cartId, Long productId, String name, int quantity, Long price, Order order) {
-        this.cartId = cartId;
+    public CartItem(String productId, String name, int quantity, Double price, Order order) {
+        this.cartId = UUID.randomUUID().toString();
         this.productId = productId;
         this.productName = name;
         this.quantity = quantity;

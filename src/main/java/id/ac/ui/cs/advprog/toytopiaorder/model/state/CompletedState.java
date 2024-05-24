@@ -8,16 +8,17 @@ import lombok.Getter;
 @Entity
 @Getter
 @DiscriminatorValue("Completed")
-public class CompletedState implements OrderState {
+public class CompletedState extends AbstractOrderState {
     @ManyToOne
     public Order order;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id = 4;
-    public final String status = "Completed";
+    public String status;
 
     public CompletedState(Order order) {
         this.order = order;
+        this.status = "Completed";
     }
 
     public CompletedState() {

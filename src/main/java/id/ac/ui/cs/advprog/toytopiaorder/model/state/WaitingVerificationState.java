@@ -2,21 +2,22 @@ package id.ac.ui.cs.advprog.toytopiaorder.model.state;
 
 import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 @Entity
 @Getter
 @DiscriminatorValue("WaitingVerification")
-public class WaitingVerificationState implements OrderState {
+public class WaitingVerificationState extends AbstractOrderState {
     @ManyToOne
     public Order order;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id = 1;
-    public final String status = "Waiting Verification";
+    public String status;
 
     public WaitingVerificationState(Order order) {
         this.order = order;
+        this.status = "Waiting for Verification";
     }
 
     public WaitingVerificationState() {
@@ -25,12 +26,10 @@ public class WaitingVerificationState implements OrderState {
 
     @Override
     public void verify() {
-        order.setState(new SetDeliveryState(order));
     }
 
     @Override
     public void cancel() {
-        order.setState(new CanceledState(order));
     }
 
     @Override
@@ -41,5 +40,10 @@ public class WaitingVerificationState implements OrderState {
     @Override
     public void complete() {
         throw new IllegalStateException("Cannot complete an order while waiting for verification");
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+        this.status = "Waiting for Verification";
     }
 }

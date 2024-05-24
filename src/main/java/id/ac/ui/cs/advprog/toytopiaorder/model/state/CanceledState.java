@@ -7,15 +7,16 @@ import lombok.Getter;
 @Entity
 @Getter
 @DiscriminatorValue("Canceled")
-public class CanceledState implements OrderState {
+public class CanceledState extends AbstractOrderState {
     @ManyToOne
     public Order order;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id = 5;
-    public final String status = "Canceled";
+    public String status;
     public CanceledState(Order order) {
         this.order = order;
+        this.status = "Canceled";
     }
 
     public CanceledState() {

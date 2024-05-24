@@ -1,95 +1,71 @@
 package id.ac.ui.cs.advprog.toytopiaorder.service;
 
-import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
-import id.ac.ui.cs.advprog.toytopiaorder.model.state.InDeliveryState;
-import id.ac.ui.cs.advprog.toytopiaorder.model.state.SetDeliveryState;
-import id.ac.ui.cs.advprog.toytopiaorder.repository.OrderRepository;
+import id.ac.ui.cs.advprog.toytopiaorder.model.*;
+import id.ac.ui.cs.advprog.toytopiaorder.model.state.*;
+import id.ac.ui.cs.advprog.toytopiaorder.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.mockito.Mockito.*;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-class OrderServiceImplTest {
+@SpringBootTest
+public class OrderServiceImplTest {
 
     @Mock
     private OrderRepository orderRepository;
 
     @Mock
-    private CartService cartService;
+    private WaitingVerificationStateRepository waitingVerificationStateRepository;
+
+    @Mock
+    private SetDeliveryStateRepository setDeliveryStateRepository;
+
+    @Mock
+    private InDeliveryStateRepository inDeliveryStateRepository;
+
+    @Mock
+    private CompletedStateRepository completedStateRepository;
+
+    @Mock
+    private CanceledStateRepository canceledStateRepository;
 
     @InjectMocks
     private OrderServiceImpl orderService;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    void testVerifyOrder() {
-        Order order = new Order(new Cart(), "1");
-        when(orderRepository.findById("1")).thenReturn(order);
-        orderService.verifyOrder("1");
-        verify(orderRepository, times(1)).save(order);
-    }
+    public void testCreateOrderFromCart() {
+        Map<String, Map<String, Object>> cart = new HashMap<>();
+        Map<String, Object> item1 = new HashMap<>();
+        item1.put("productId", "1");
+        item1.put("name", "Toy 1");
+        item1.put("quantity", 2);
+        item1.put("price", 10.0);
+        cart.put("item1", item1);
 
-    @Test
-    void testCancelOrder() {
-        Order order = new Order(new Cart(), "1");
-        when(orderRepository.findById("1")).thenReturn(order);
-        orderService.cancelOrder("1");
-        verify(orderRepository, times(1)).save(order);
-    }
+        when(orderRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(waitingVerificationStateRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-    @Test
-    void testSetDeliveryMethod() {
-        Order order = new Order(new Cart(), "1");
-        order.setState(new SetDeliveryState(order));
-        when(orderRepository.findById("1")).thenReturn(order);
-        orderService.setDeliveryMethod("1", "JTE");
-        assertEquals("JTE", order.getDeliveryMethod());
-        verify(orderRepository, times(1)).save(order);
-    }
+        Order order = orderService.createOrderFromCart(20.0, "cart123", cart);
 
-    @Test
-    void testCompleteOrder() {
-        Order order = new Order(new Cart(), "1");
-        when(orderRepository.findById("1")).thenReturn(order);
-        order.setState(new InDeliveryState(order));
-        orderService.completeOrder("1");
-        verify(orderRepository, times(1)).save(order);
-    }
-
-    @Test
-    void testFindOrderById() {
-        Order order = new Order(new Cart(), "1");
-        when(orderRepository.findById("1")).thenReturn(order);
-        assertEquals(order, orderService.findOrderById("1"));
-    }
-
-    @Test
-    void testFindAll() {
-        List<Order> orders = new ArrayList<>();
-        Order order1 = new Order(new Cart(), "1");
-        Order order2 = new Order(new Cart(), "2");
-        orders.add(order1);
-        orders.add(order2);
-        when(orderRepository.findAll()).thenReturn(orders.iterator());
-        assertEquals(orders, orderService.findAll());
-    }
-
-    @Test
-    void testCreateOrderFromCart() {
-        Cart cart = new Cart();
-        cart.setId("1");
-        Order created = orderService.createOrderFromCart(cart, "1");
-        when(cartService.getCartById("1")).thenReturn(cart);
-        assertEquals("1", created.getId());
+        assertNotNull(order);
+        assertEquals(20.0, order.getTotalPrice());
+        assertEquals(1, order.getCartItemMap().size());
+        assertInstanceOf(WaitingVerificationState.class, order.getState());
     }
 }
+

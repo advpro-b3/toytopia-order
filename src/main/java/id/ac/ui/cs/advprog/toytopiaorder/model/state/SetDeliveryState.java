@@ -9,16 +9,17 @@ import lombok.Getter;
 @Entity
 @Getter
 @DiscriminatorValue("SetDelivery")
-public class SetDeliveryState implements OrderState {
+public class SetDeliveryState extends AbstractOrderState {
     @ManyToOne
     public Order order;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id = 2;
-    public final String status = "Set Delivery";
+    public String status;
 
     public SetDeliveryState(Order order) {
         this.order = order;
+        this.status = "Set Delivery";
     }
 
     public SetDeliveryState() {
@@ -32,13 +33,12 @@ public class SetDeliveryState implements OrderState {
 
     @Override
     public void cancel() {
-        order.setState(new CanceledState(order));
+        throw new IllegalStateException("Cannot cancel an order that is already in the delivery process");
     }
 
     @Override
     public void setDelivery(String method) {
         order.setDelivery(method);
-        order.setState(new InDeliveryState(order));
     }
 
     @Override

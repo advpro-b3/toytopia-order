@@ -10,6 +10,7 @@ public interface OrderService {
     void cancelOrder(String id);
     void setDeliveryMethod(String id, String deliveryMethod);
     void completeOrder(String id);
+    Order findByOrderId(String id);
     List<Order> findAll();
-    Order createOrderFromCart(Long totalPrice, String cartId, Map<String, Object> cart);
+    Order createOrderFromCart(Double totalPrice, String cartId, Map<String, Map<String, Object>> cart);
 }

@@ -20,7 +20,11 @@
         </thead>
         <tbody>
         <tr th:each="order: ${orders}">
-            <td th:text="${order.getOrderId()}"></td>
+            <td>
+                <a th:href="@{'/order/list/details/' + ${order.getOrderId()}}">
+                    <span th:text="${order.getOrderId()}"></span>
+                </a>
+            </td>
             <td th:text="${order.getTotalPrice()}"></td>
             <td th:text="${order.status()}"></td>
             <td>

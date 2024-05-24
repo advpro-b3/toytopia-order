@@ -1,79 +1,111 @@
 package id.ac.ui.cs.advprog.toytopiaorder.model;
 
 import id.ac.ui.cs.advprog.toytopiaorder.enums.DeliveryMethod;
+import id.ac.ui.cs.advprog.toytopiaorder.model.*;
 import id.ac.ui.cs.advprog.toytopiaorder.model.state.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class OrderTest {
 
     private Order order;
-    private Cart cart;
 
     @BeforeEach
-    public void setUp() {
-        cart = new Cart();
-        order = new Order(cart, "1");
+    void setUp() {
+        order = new Order(100.0);
     }
 
-    @Nested
-    class InitialOrderTests {
-        @Test
-        public void testOrderStatusIsWaitingVerificationOnInitiation() {
-            assertTrue(order.getState() instanceof WaitingVerificationState);
-        }
+    @Test
+    void testAddCartItem() {
+        List<CartItem> cartItems = new ArrayList<>();
+        CartItem item1 = new CartItem("1", "Toy 1", 2, 20.0, order);
+        CartItem item2 = new CartItem("2", "Toy 2", 1, 30.0, order);
+        cartItems.add(item1);
+        cartItems.add(item2);
+
+        order.addCartItem(cartItems);
+
+        assertEquals(2, order.getCartItemMap().size());
     }
 
-    @Nested
-    class VerifyTests {
-        @Test
-        public void testVerify() {
-            order.verify();
-            assertTrue(order.getState() instanceof SetDeliveryState);
-        }
+    @Test
+    void testSetDeliveryMethod() {
+        AbstractOrderState state = mock(AbstractOrderState.class);
+        order.setState(state);
+
+        order.setDeliveryMethod("JTE");
+
+        verify(state, times(1)).setDelivery("JTE");
     }
 
-    @Nested
-    class SetDeliveryMethodTests {
-        @Test
-        public void testSetDeliveryMethodInvalid() {
-            order.setState(new SetDeliveryState(order));
-            assertThrows(IllegalArgumentException.class, () -> order.setDeliveryMethod("InvalidMethod"));
-        }
+    @Test
+    void testSetResiCode() {
+        String resiCode = order.setResiCode("JTE");
 
-        @Test
-        public void testSetDeliveryMethodIllegalState() {
-            assertThrows(IllegalStateException.class, () -> order.setDeliveryMethod("JTE"));
-        }
-        @Test
-        public void testSetDeliveryMethod() {
-            order.setState(new SetDeliveryState(order));
-            order.setDeliveryMethod(DeliveryMethod.JTE.getValue());
-            assertEquals(DeliveryMethod.JTE.getValue(), order.getDeliveryMethod());
-            assertTrue(order.getResiCode().startsWith("JTE-"));
-            assertTrue(order.getState() instanceof InDeliveryState);
-        }
+        assertTrue(resiCode.startsWith("JTE-"));
+        assertEquals(16, resiCode.length());
     }
 
-    @Nested
-    class CompleteTests {
-        @Test
-        public void testCompleteIllegalStateException() {
-            order.setState(new InDeliveryState(order));
-            order.complete();
-            assertTrue(order.getState() instanceof CompletedState);
-        }
+    @Test
+    void testStatus() {
+        WaitingVerificationState waitingVerificationState = new WaitingVerificationState(order);
+        order.setState(waitingVerificationState);
+
+        assertEquals("Waiting for Verification", order.status());
+
+        SetDeliveryState setDeliveryState = new SetDeliveryState(order);
+        order.setState(setDeliveryState);
+
+        assertEquals("Set Delivery", order.status());
+
+        InDeliveryState inDeliveryState = new InDeliveryState(order);
+        order.setState(inDeliveryState);
+
+        assertEquals("In Delivery", order.status());
+
+        CompletedState completedState = new CompletedState(order);
+        order.setState(completedState);
+
+        assertEquals("Completed", order.status());
+
+        CanceledState canceledState = new CanceledState(order);
+        order.setState(canceledState);
+
+        assertEquals("Canceled", order.status());
     }
 
-    @Nested
-    class CancelTests {
-        @Test
-        public void testCancel() {
-            order.setState(new WaitingVerificationState(order));
-            order.cancel();
-            assertTrue(order.getState() instanceof CanceledState);
-        }
+    @Test
+    void testVerify() {
+        AbstractOrderState state = mock(AbstractOrderState.class);
+        order.setState(state);
+
+        order.verify();
+
+        verify(state, times(1)).verify();
+    }
+
+    @Test
+    void testCancel() {
+        AbstractOrderState state = mock(AbstractOrderState.class);
+        order.setState(state);
+
+        order.cancel();
+
+        verify(state, times(1)).cancel();
+    }
+
+    @Test
+    void testComplete() {
+        AbstractOrderState state = mock(AbstractOrderState.class);
+        order.setState(state);
+
+        order.complete();
+
+        verify(state, times(1)).complete();
     }
 }
