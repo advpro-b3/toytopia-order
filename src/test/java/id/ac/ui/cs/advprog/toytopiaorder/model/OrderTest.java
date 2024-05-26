@@ -17,7 +17,7 @@ class OrderTest {
 
     @BeforeEach
     void setUp() {
-        order = new Order(100.0);
+        order = new Order("abc123", 100.0);
     }
 
     @Test

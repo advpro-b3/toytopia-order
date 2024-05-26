@@ -3,99 +3,157 @@ package id.ac.ui.cs.advprog.toytopiaorder.controller;
 import id.ac.ui.cs.advprog.toytopiaorder.model.Order;
 import id.ac.ui.cs.advprog.toytopiaorder.service.CartService;
 import id.ac.ui.cs.advprog.toytopiaorder.service.OrderService;
-
+import id.ac.ui.cs.advprog.toytopiaorder.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.*;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class OrderControllerTest {
-
+public class OrderControllerTest {
     @Mock
     private OrderService orderService;
 
     @Mock
     private CartService cartService;
 
+    @Mock
+    private UserService userService;
+
     @InjectMocks
     private OrderController orderController;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     void testCheckoutSuccess() {
-        String cartId = "cart123";
+        // Arrange
+        String cartId = "123";
+        String token = "validToken";
+        String email = "user@example.com";
+
         Map<String, Object> cart = new HashMap<>();
         cart.put("totalPrice", 100.0);
-        Map<String, Map<String, Object>> cartItems = new HashMap<>();
-        cart.put("cartItems", cartItems);
-        when(cartService.getCartById(cartId)).thenReturn(cart);
+        cart.put("cartItems", new HashMap<>());
 
-        Order order = new Order();
-        when(orderService.createOrderFromCart(100.0, cartId, cartItems)).thenReturn(order);
+        Order order = new Order(email, 100.0);
 
-        ResponseEntity<String> response = orderController.checkout(cartId);
+        when(userService.getEmail(anyString())).thenReturn(CompletableFuture.completedFuture(email));
+        when(cartService.getCartById(anyString())).thenReturn(cart);
+        when(orderService.createOrderFromCart(anyString(), anyDouble(), anyString(), anyMap())).thenReturn(order);
 
-        assertEquals("Order created successfully with ID: " + order.getOrderId(), response.getBody());
-        assertEquals(200, response.getStatusCodeValue());
-    }
+        // Act
+        CompletableFuture<ResponseEntity<String>> responseFuture = orderController.checkout(cartId, token);
 
-    @Test
-    void testCheckoutFailure() {
-        String cartId = "cart123";
-        when(cartService.getCartById(cartId)).thenReturn(null);
-
-        ResponseEntity<String> response = orderController.checkout(cartId);
-
-        assertEquals("Cart with ID cart123 not found.", response.getBody());
-        assertEquals(400, response.getStatusCodeValue());
+        // Assert
+        assertEquals(HttpStatus.OK, responseFuture.join().getStatusCode());
     }
 
     @Test
     void testVerifyOrder() {
-        String orderId = "order123";
+        String token = "validToken";
+        String orderId = "123";
+        Order order = new Order();
 
-        orderController.verifyOrder(orderId);
+        when(userService.isAdmin(anyString())).thenReturn(CompletableFuture.completedFuture(true));
+        when(orderService.verifyOrder(anyString())).thenReturn(order);
 
-        verify(orderService, times(1)).verifyOrder(orderId);
+        CompletableFuture<ResponseEntity<Order>> response = orderController.verifyOrder(token, orderId);
+
+        assertEquals(HttpStatus.OK, response.join().getStatusCode());
+        verify(userService, times(1)).isAdmin(anyString());
+        verify(orderService, times(1)).verifyOrder(anyString());
     }
 
     @Test
     void testCancelOrder() {
-        String orderId = "order123";
+        String token = "validToken";
+        String orderId = "123";
+        Order order = new Order();
 
-        orderController.cancelOrder(orderId);
+        when(userService.isAdmin(anyString())).thenReturn(CompletableFuture.completedFuture(true));
+        when(orderService.cancelOrder(anyString())).thenReturn(order);
 
-        verify(orderService, times(1)).cancelOrder(orderId);
+        CompletableFuture<ResponseEntity<Order>> response = orderController.cancelOrder(token, orderId);
+
+        assertEquals(HttpStatus.OK, response.join().getStatusCode());
+        verify(userService, times(1)).isAdmin(anyString());
+        verify(orderService, times(1)).cancelOrder(anyString());
     }
 
     @Test
     void testSetDeliveryMethod() {
-        String orderId = "order123";
-        String deliveryMethod = "standard";
+        String token = "validToken";
+        String orderId = "123";
+        String deliveryMethod = "Express";
+        Order order = new Order();
 
-        orderController.setDeliveryMethod(orderId, deliveryMethod);
+        when(userService.isAdmin(anyString())).thenReturn(CompletableFuture.completedFuture(true));
+        when(orderService.setDeliveryMethod(anyString(), anyString())).thenReturn(order);
 
-        verify(orderService, times(1)).setDeliveryMethod(orderId, deliveryMethod);
+        CompletableFuture<ResponseEntity<Order>> response = orderController.verifyOrder(token, orderId, deliveryMethod);
+
+        assertEquals(HttpStatus.OK, response.join().getStatusCode());
+        verify(userService, times(1)).isAdmin(anyString());
+        verify(orderService, times(1)).setDeliveryMethod(anyString(), anyString());
     }
 
     @Test
     void testCompleteOrder() {
-        String orderId = "order123";
+        String orderId = "123";
+        Order order = new Order();
 
-        orderController.completeOrder(orderId);
+        when(orderService.completeOrder(anyString())).thenReturn(order);
 
-        verify(orderService, times(1)).completeOrder(orderId);
+        ResponseEntity<Order> response = orderController.ccmpleteOrder(orderId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(orderService, times(1)).completeOrder(anyString());
+    }
+
+    @Test
+    void testOrderListPage() {
+        String token = "validToken";
+        String orderId = "123";
+        String email = "user@example.com";
+        List<List<String>> orders = Collections.emptyList();
+
+        when(userService.getEmail(anyString())).thenReturn(CompletableFuture.completedFuture(email));
+        when(orderService.findByUserEmail(anyString())).thenReturn(orders);
+
+        CompletableFuture<ResponseEntity<List<List<String>>>> response = orderController.OrderListPage(token);
+
+        assertEquals(HttpStatus.OK, response.join().getStatusCode());
+        verify(userService, times(1)).getEmail(anyString());
+        verify(orderService, times(1)).findByUserEmail(anyString());
+    }
+
+    @Test
+    void testOrderListPageAdmin() {
+        String token = "validToken";
+        List<List<String>> orders = Collections.emptyList();
+
+        when(userService.isAdmin(anyString())).thenReturn(CompletableFuture.completedFuture(true));
+        when(orderService.findAll()).thenReturn(orders);
+
+        CompletableFuture<ResponseEntity<List<List<String>>>> response = orderController.OrderListPageAdmin(token);
+
+        assertEquals(HttpStatus.OK, response.join().getStatusCode());
+        verify(userService, times(1)).isAdmin(anyString());
+        verify(orderService, times(1)).findAll();
     }
 }

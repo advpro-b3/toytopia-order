@@ -17,6 +17,7 @@ import lombok.Getter;
 public class Order {
     @Id
     private String orderId;
+    private String userEmail;
     private Double totalPrice;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKey(name = "productId")
@@ -26,7 +27,8 @@ public class Order {
     @ManyToOne
     private AbstractOrderState state;
 
-    public Order(Double totalPrice) {
+    public Order(String userEmail, Double totalPrice) {
+        this.userEmail = userEmail;
         this.orderId = UUID.randomUUID().toString();;
         this.totalPrice = totalPrice;
     }
