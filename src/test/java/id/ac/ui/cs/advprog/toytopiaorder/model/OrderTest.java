@@ -44,11 +44,47 @@ class OrderTest {
     }
 
     @Test
-    void testSetResiCode() {
-        String resiCode = order.setResiCode("JTE");
+    void testSetDelivery() {
+        order.setDelivery("JTE");
+        assertEquals("JTE", order.getDeliveryMethod());
+    }
 
-        assertTrue(resiCode.startsWith("JTE-"));
+    @Test
+    void testSetDeliveryInvalidMethod() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            order.setDelivery("TIKA");
+        });
+    }
+
+    @Test
+    void testSetResiCodeJTE() {
+        order.setDelivery("JTE");
+
+        assertTrue(order.getResiCode().startsWith("JTE-"));
+        assertEquals(16, order.getResiCode().length());
+    }
+
+    @Test
+    void testSetResiCodeGBK() {
+        String resiCode = order.setResiCode("GOBEK");
+
+        assertTrue(resiCode.startsWith("GBK-"));
         assertEquals(16, resiCode.length());
+    }
+
+    @Test
+    void testSetResiCodeSWZ() {
+        String resiCode = order.setResiCode("SIWUZZ");
+
+        assertTrue(resiCode.startsWith("SWZ-"));
+        assertEquals(16, resiCode.length());
+    }
+
+    @Test
+    void testSetResiCodeInvalid() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            order.setResiCode("TIKA");
+        });
     }
 
     @Test
