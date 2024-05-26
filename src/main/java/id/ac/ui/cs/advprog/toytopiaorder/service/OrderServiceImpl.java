@@ -36,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void verifyOrder(String orderId) {
+    public Order verifyOrder(String orderId) {
         Order order = orderRepository.findByOrderId(orderId);
         try {
             order.verify();
@@ -48,11 +48,11 @@ public class OrderServiceImpl implements OrderService {
         catch (Exception e) {
             logger.error("Error occurred: " + e.getMessage());
         }
-
+        return order;
     }
 
     @Override
-    public void cancelOrder(String orderId) {
+    public Order cancelOrder(String orderId) {
         Order order = orderRepository.findByOrderId(orderId);
         try {
             order.cancel();
@@ -64,10 +64,11 @@ public class OrderServiceImpl implements OrderService {
         catch (Exception e) {
             logger.error("Error occurred: " + e.getMessage());
         }
+        return order;
     }
 
     @Override
-    public void setDeliveryMethod(String orderId, String deliveryMethod) {
+    public Order setDeliveryMethod(String orderId, String deliveryMethod) {
         Order order = orderRepository.findByOrderId(orderId);
         try {
             order.setDeliveryMethod(deliveryMethod);
@@ -79,10 +80,11 @@ public class OrderServiceImpl implements OrderService {
         catch (Exception e) {
             logger.error("Error occurred: " + e.getMessage());
         }
+        return order;
     }
 
     @Override
-    public void completeOrder(String orderId) {
+    public Order completeOrder(String orderId) {
         Order order = orderRepository.findByOrderId(orderId);
         try {
             order.complete();
@@ -94,12 +96,17 @@ public class OrderServiceImpl implements OrderService {
         catch (Exception e) {
             logger.error("Error occurred: " + e.getMessage());
         }
+        return order;
     }
 
     @Override
-    public List<Order> findAll() {
-        List<Order> allOrder = orderRepository.findAll();
-        return allOrder;
+    public List<List<String>> findByUserEmail(String email) {
+        return orderRepository.retrieveOrderByEmail(email);
+    }
+
+    @Override
+    public List<List<String>> findAll() {
+        return orderRepository.retrieveAllOrder();
     }
 
     @Override
@@ -108,12 +115,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order createOrderFromCart(Double totalPrice, String cartId, Map<String, Map<String, Object>> cart)  {
+    public Order createOrderFromCart(String email, Double totalPrice, String cartId, Map<String, Map<String, Object>> cart)  {
         WaitingVerificationState waitingVerificationState = new WaitingVerificationState(null);
         waitingVerificationStateRepository.save(waitingVerificationState);
         List<CartItem> cartItems = new ArrayList<>();
         if (cart != null) {
-            Order order = new Order(totalPrice);
+            Order order = new Order(email, totalPrice);
             for (Map.Entry<String, Map<String, Object>> entry : cart.entrySet()) {
                 Map<String, Object> value = entry.getValue();
                 if (value != null) {
