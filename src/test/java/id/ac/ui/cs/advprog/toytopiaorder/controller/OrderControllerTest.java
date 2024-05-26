@@ -119,7 +119,7 @@ public class OrderControllerTest {
 
         when(orderService.completeOrder(anyString())).thenReturn(order);
 
-        ResponseEntity<Order> response = orderController.ccmpleteOrder(orderId);
+        ResponseEntity<Order> response = orderController.completeOrder(orderId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(orderService, times(1)).completeOrder(anyString());

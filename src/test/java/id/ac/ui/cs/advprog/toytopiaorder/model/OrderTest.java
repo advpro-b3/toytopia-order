@@ -1,7 +1,6 @@
 package id.ac.ui.cs.advprog.toytopiaorder.model;
 
-import id.ac.ui.cs.advprog.toytopiaorder.enums.DeliveryMethod;
-import id.ac.ui.cs.advprog.toytopiaorder.model.*;
+import org.springframework.boot.test.context.SpringBootTest;
 import id.ac.ui.cs.advprog.toytopiaorder.model.state.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +10,7 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@SpringBootTest
 class OrderTest {
 
     private Order order;
@@ -44,11 +44,47 @@ class OrderTest {
     }
 
     @Test
-    void testSetResiCode() {
-        String resiCode = order.setResiCode("JTE");
+    void testSetDelivery() {
+        order.setDelivery("JTE");
+        assertEquals("JTE", order.getDeliveryMethod());
+    }
 
-        assertTrue(resiCode.startsWith("JTE-"));
+    @Test
+    void testSetDeliveryInvalidMethod() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            order.setDelivery("TIKA");
+        });
+    }
+
+    @Test
+    void testSetResiCodeJTE() {
+        order.setDelivery("JTE");
+
+        assertTrue(order.getResiCode().startsWith("JTE-"));
+        assertEquals(16, order.getResiCode().length());
+    }
+
+    @Test
+    void testSetResiCodeGBK() {
+        String resiCode = order.setResiCode("GOBEK");
+
+        assertTrue(resiCode.startsWith("GBK-"));
         assertEquals(16, resiCode.length());
+    }
+
+    @Test
+    void testSetResiCodeSWZ() {
+        String resiCode = order.setResiCode("SIWUZZ");
+
+        assertTrue(resiCode.startsWith("SWZ-"));
+        assertEquals(16, resiCode.length());
+    }
+
+    @Test
+    void testSetResiCodeInvalid() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            order.setResiCode("TIKA");
+        });
     }
 
     @Test

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class OrderController {
     @Autowired
     private final OrderService orderService;
     private final CartService cartService;
-    private UserService userService;
+    private final UserService userService;
 
     public OrderController(OrderService orderService, CartService cartService, UserService userService) {
         this.orderService = orderService;
@@ -96,7 +95,7 @@ public class OrderController {
     }
 
     @PutMapping("/complete/{id}")
-    public ResponseEntity<Order> ccmpleteOrder(@PathVariable("id") String orderId) {
+    public ResponseEntity<Order> completeOrder(@PathVariable("id") String orderId) {
         Order completed =  orderService.completeOrder(orderId);
         return ResponseEntity.ok(completed);
     }

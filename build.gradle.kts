@@ -3,6 +3,7 @@ plugins {
     jacoco
     id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.4"
+    id("org.sonarqube") version "4.4.1.3373"
 }
 
 group = "id.ac.ui.cs.advprog"
@@ -44,7 +45,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     implementation("org.springframework.boot:spring-boot-starter-actuator:3.2.5")
-    runtimeOnly("io.micrometer:micrometer-registry-prometheus:1.12.5")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.12.5")
 }
 
 tasks.register<Test>("unitTest"){
@@ -75,12 +76,26 @@ tasks.test {
 }
 tasks.jacocoTestReport {
     classDirectories.setFrom(files(classDirectories.files.map {
-        fileTree(it) { exclude("**/*Application**") }
+        fileTree(it) { exclude("**/*Application**",
+                "**/*User*",
+                "**/*Cart*",
+                "**/model/state/*",
+                "**/enums/*",
+                "**/config/*",
+                "**/repository/*",)}
     }))
     dependsOn(tasks.test) // tests are required to run before generating the report
     reports {
         xml.required.set(false)
         csv.required.set(false)
         html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+    }
+
+    sonar {
+        properties {
+            property("sonar.projectKey", "advpro-b3_toytopia-order")
+            property("sonar.organization", "advpro-b3")
+            property("sonar.host.url", "https://sonarcloud.io")
+        }
     }
 }
