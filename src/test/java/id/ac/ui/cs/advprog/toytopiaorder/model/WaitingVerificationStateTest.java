@@ -13,7 +13,7 @@ class WaitingVerificationStateTest {
 
     @BeforeEach
     void setUp() {
-        order = new Order(100.0);
+        order = new Order("abc123", 100.0);
         waitingVerificationState = new WaitingVerificationState(order);
     }
 
@@ -25,7 +25,7 @@ class WaitingVerificationStateTest {
 
     @Test
     void testSetOrder() {
-        Order newOrder = new Order(200.0);
+        Order newOrder = new Order("abc124",200.0);
         waitingVerificationState.setOrder(newOrder);
 
         assertEquals(newOrder, waitingVerificationState.getOrder());

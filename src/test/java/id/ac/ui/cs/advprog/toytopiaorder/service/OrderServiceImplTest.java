@@ -60,7 +60,7 @@ public class OrderServiceImplTest {
         when(orderRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         when(waitingVerificationStateRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Order order = orderService.createOrderFromCart(20.0, "cart123", cart);
+        Order order = orderService.createOrderFromCart("sab@mail", 20.0, "cart123", cart);
 
         assertNotNull(order);
         assertEquals(20.0, order.getTotalPrice());
