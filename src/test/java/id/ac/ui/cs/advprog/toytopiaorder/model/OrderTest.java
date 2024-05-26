@@ -1,7 +1,6 @@
 package id.ac.ui.cs.advprog.toytopiaorder.model;
 
-import id.ac.ui.cs.advprog.toytopiaorder.enums.DeliveryMethod;
-import id.ac.ui.cs.advprog.toytopiaorder.model.*;
+import org.springframework.boot.test.context.SpringBootTest;
 import id.ac.ui.cs.advprog.toytopiaorder.model.state.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +10,7 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@SpringBootTest
 class OrderTest {
 
     private Order order;

@@ -9,11 +9,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -46,7 +44,6 @@ public class OrderServiceImplTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
-
     @Test
     public void testCreateOrderFromCart() {
         Map<String, Map<String, Object>> cart = new HashMap<>();
